@@ -24,10 +24,23 @@ export default Ember.Component.extend({
     return proposalsAsBlocks(this.get('proposals'));
   }),
 
-  didInsertElement: function() {
-    this.$('input').keydown(() => {
-      this.get('answerChanged')();
-    });
-  }
+  // TODO: use bound properties instead of inspecting the DOM
+  getAnswerValueFromInputsState() {
+    return jsyaml.safeDump(this.answersFromInputsState());
+  },
 
+  answersFromInputsState() {
+    const result = {};
+    $('.challenge-response__proposal-input').each(function(index, element) {
+      result[$(element).attr('name')] = $(element).val();
+    });
+    return result;
+  },
+
+  actions: {
+    inputChanged() {
+      const answerValue = this.getAnswerValueFromInputsState();
+      this.get('answerChanged')(answerValue);
+    }
+  }
 });
