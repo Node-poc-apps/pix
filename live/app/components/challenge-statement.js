@@ -1,7 +1,9 @@
 import Ember from 'ember';
-import moment from 'moment';
+import config from 'pix-live/config/environment';
 
 export default Ember.Component.extend({
+
+  mailGenerator: Ember.inject.service(),
 
   classNames: ['rounded-panel', 'challenge-statement'],
 
@@ -49,6 +51,7 @@ export default Ember.Component.extend({
   },
 
   _formattedEmailForInstruction: function() {
-    return `${this.get('challenge.id')}-${this.get('assessment.id')}-${moment().format('DDMM')}@pix-infra.ovh`;
+    return this.get('mailGenerator')
+      .generateEmail(this.get('challenge.id'), this.get('assessment.id'), window.location.hostname, config.environment);
   },
 });
